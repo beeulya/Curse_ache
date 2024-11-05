@@ -4,8 +4,9 @@
 #include <string.h> 
 #include <stdio.h>
 #include <math.h>
-#include<GLFW/glfw3.h>
-#include<GLFW/stb_easy_font.h>
+#include <GLFW/glfw3.h>
+#include <GLFW/stb_easy_font.h>
+#include <time.h>
 #define GL_SILENCE_DEPRECATION
 #define INCLUDE_STB_EASY_FONT_H
 
@@ -307,7 +308,7 @@ void renderDesk(int kolvoKletok, int windowSize) {
 }
 
 //-------------------------------------
-//печатает все фигуры на поле
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
 void printDesk(square** desk, int kolvoKletok, GLFWwindow* window, int windowSize) {
     printf("  ");
     for (int k = 1; k < kolvoKletok - 1; k++) {
@@ -328,7 +329,7 @@ void printDesk(square** desk, int kolvoKletok, GLFWwindow* window, int windowSiz
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-//функции, высчитывающие колиество поставленных вряд фигур
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 int checkDiagonal1(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
     symbol symb = desk[coordx][coordy].sign;
     int count = 0;
@@ -431,7 +432,7 @@ int checkVertikal(square** desk, int kolvoKletok, int coordx, int coordy, int fl
     }
     return count;
 }
-//ищет самое приоритетное направление и соответствующую ему клетку поля
+//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
     squarePriority count;
     count.priority = 0;
@@ -553,7 +554,7 @@ void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
 
 int razrivFlyagi(square** desk, int kolvoKletok, int coordx, int coordy, symbol sign) {
     int priority = 0;
-    //обе диагонали
+    //пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     if (desk[coordx - 1][coordy - 1].sign == desk[coordx + 1][coordy + 1].sign && desk[coordx - 1][coordy - 1].sign == sign) {
         int priority1 = checkDiagonal1(desk, kolvoKletok, coordx - 1, coordy - 1, 0);
         int priority2 = checkDiagonal1(desk, kolvoKletok, coordx + 1, coordy + 1, 0);
@@ -564,13 +565,13 @@ int razrivFlyagi(square** desk, int kolvoKletok, int coordx, int coordy, symbol 
         int priority2 = checkDiagonal2(desk, kolvoKletok, coordx - 1, coordy + 1, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
-    //горизонталь -- атаки сверху и снизу
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ -- пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
     if (desk[coordx - 1][coordy].sign == desk[coordx + 1][coordy].sign && desk[coordx - 1][coordy].sign == sign) {
         int priority1 = checkGorizont(desk, kolvoKletok, coordx - 1, coordy, 0);
         int priority2 = checkGorizont(desk, kolvoKletok, coordx + 1, coordy, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
-    //вертикаль -- атаки снизу и сверху
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ -- пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     if (desk[coordx][coordy - 1].sign == desk[coordx][coordy + 1].sign && desk[coordx][coordy - 1].sign == sign) {
         int priority1 = checkVertikal(desk, kolvoKletok, coordx, coordy - 1, 0);
         int priority2 = checkVertikal(desk, kolvoKletok, coordx, coordy + 1, 0);
@@ -602,7 +603,7 @@ void setPriority(square** desk, int kolvoKletok, int coordx, int coordy, int tur
     }
 }
 
-//Ищет самую выгодную клетку
+//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 squarePriority checkPositions(square** desk, int kolvoKletok, int turn) {
     squarePriority maxPrioritet;
     maxPrioritet.priority = 0;
@@ -611,75 +612,75 @@ squarePriority checkPositions(square** desk, int kolvoKletok, int turn) {
     maxPrioritet.flag = 0;
     for (int i = 1; i < kolvoKletok - 1; i++) {
         for (int j = 1; j < kolvoKletok - 1; j++) {
-            if (turn % 2 == 0) { //сценарии для крестика
-                if (desk[i][j].line_priority_X == 4 && maxPrioritet.priority < desk[i][j].line_priority_X) { //если находит 4 крестика, ставит пятый -- выигрышная позиция
+            if (turn % 2 == 0) { //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+                if (desk[i][j].line_priority_X == 4 && maxPrioritet.priority < desk[i][j].line_priority_X) { //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 4 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ -- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_X;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_O == 4 && maxPrioritet.priority < desk[i][j].line_priority_O) { //если находит 4 нолика, перекрывает атаку
+                else if (desk[i][j].line_priority_O == 4 && maxPrioritet.priority < desk[i][j].line_priority_O) { //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 4 пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_O == 3 && desk[i][j].block == 0 && maxPrioritet.priority < desk[i][j].line_priority_O) { //если находит 3 нолика (атака не заблокирована ни с одной из сторон), перекрывает с одной стороны
+                else if (desk[i][j].line_priority_O == 3 && desk[i][j].block == 0 && maxPrioritet.priority < desk[i][j].line_priority_O) { //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 3 пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ), пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_X == 3 && maxPrioritet.priority < desk[i][j].line_priority_X) { //находит 3 вряд крестика (база)
+                else if (desk[i][j].line_priority_X == 3 && maxPrioritet.priority < desk[i][j].line_priority_X) { //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 3 пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ)
                     maxPrioritet.priority = desk[i][j].line_priority_X;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_O == 3 && desk[i][j].block == 1 && maxPrioritet.priority < desk[i][j].line_priority_O) { //если находит 3 нолика (заблокировано с одной стороны)
+                else if (desk[i][j].line_priority_O == 3 && desk[i][j].block == 1 && maxPrioritet.priority < desk[i][j].line_priority_O) { //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 3 пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_X >= maxPrioritet.priority && maxPrioritet.priority < desk[i][j].line_priority_X) { //остальные случаи (базированная база) -- поиск крестиков
+                else if (desk[i][j].line_priority_X >= maxPrioritet.priority && maxPrioritet.priority < desk[i][j].line_priority_X) { //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ) -- пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_X;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_O >= maxPrioritet.priority && maxPrioritet.priority < desk[i][j].line_priority_O) { //остальные случаи (базированная база) -- поиск ноликов
+                else if (desk[i][j].line_priority_O >= maxPrioritet.priority && maxPrioritet.priority < desk[i][j].line_priority_O) { //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ) -- пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
             }
-            if (turn % 2 == 1) { //сценарии для нолика
-                if (desk[i][j].line_priority_O == 4 && maxPrioritet.priority < desk[i][j].line_priority_O) { //если находит 4 нолика, ставит пятый -- выигрышная позиция
+            if (turn % 2 == 1) { //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+                if (desk[i][j].line_priority_O == 4 && maxPrioritet.priority < desk[i][j].line_priority_O) { //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 4 пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ -- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_X == 4 && maxPrioritet.priority < desk[i][j].line_priority_X) { //если находит 4 крестика, перекрывает атаку
+                else if (desk[i][j].line_priority_X == 4 && maxPrioritet.priority < desk[i][j].line_priority_X) { //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 4 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_X;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_X == 3 && desk[i][j].block == 0 && maxPrioritet.priority < desk[i][j].line_priority_X) { //если находит 3 крестика (атака не заблокирована ни с одной из сторон), перекрывает с одной стороны
+                else if (desk[i][j].line_priority_X == 3 && desk[i][j].block == 0 && maxPrioritet.priority < desk[i][j].line_priority_X) { //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 3 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ), пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_X;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_O == 3 && maxPrioritet.priority < desk[i][j].line_priority_O) { //находит 3 вряд нолика (база)
+                else if (desk[i][j].line_priority_O == 3 && maxPrioritet.priority < desk[i][j].line_priority_O) { //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 3 пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ)
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_X == 3 && desk[i][j].block == 1 && maxPrioritet.priority < desk[i][j].line_priority_X) { //если находит 3 крестика (заблокировано с одной стороны)
+                else if (desk[i][j].line_priority_X == 3 && desk[i][j].block == 1 && maxPrioritet.priority < desk[i][j].line_priority_X) { //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 3 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
                     maxPrioritet.priority = desk[i][j].line_priority_X;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_O >= maxPrioritet.priority && turn != 1 && maxPrioritet.priority < desk[i][j].line_priority_O) { //остальные случаи (базированная база) -- поиск ноликов
+                else if (desk[i][j].line_priority_O >= maxPrioritet.priority && turn != 1 && maxPrioritet.priority < desk[i][j].line_priority_O) { //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ) -- пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_X >= maxPrioritet.priority && maxPrioritet.priority < desk[i][j].line_priority_X) { //остальные случаи (базированная база) -- поиск крестиков
+                else if (desk[i][j].line_priority_X >= maxPrioritet.priority && maxPrioritet.priority < desk[i][j].line_priority_X) { //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ) -- пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     maxPrioritet.priority = desk[i][j].line_priority_X;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
@@ -690,7 +691,7 @@ squarePriority checkPositions(square** desk, int kolvoKletok, int turn) {
     return maxPrioritet;
 }
 
-//Функция, проверяющая наличие победы
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 int checkWin(square** desk, int kolvoKletok, int windowSize, GLFWwindow* window, int option) {
     for (int i = 1; i < kolvoKletok - 1; i++) {
         for (int j = 1; j < kolvoKletok - 1; j++) {
@@ -854,13 +855,17 @@ int main(void) {
                 if (turn > 6) step = checkWin(desk, kolvoKletok, windowSize, window, option);
                 if (step == 5 || step == 6) continue;
 
+                double time1 = clock();
                 coordx = checkPositions(desk, kolvoKletok, turn).coordx;
                 coordy = checkPositions(desk, kolvoKletok, turn).coordy;
                 if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
                 else desk[coordx][coordy].sign = nolik;
                 setPriority(desk, kolvoKletok, coordx, coordy, turn);
+                double time2 = clock();
+                double operating_time = (time2 - time1) / CLOCKS_PER_SEC;
                 turn++;
                 printDesk(desk, kolvoKletok, window, windowSize);
+                printf("Algorithm time operating: %f\n", operating_time);
                 if (turn > 6) step = checkWin(desk, kolvoKletok, windowSize, window, option);
                 if (step == 5 || step == 6) continue;
             }
