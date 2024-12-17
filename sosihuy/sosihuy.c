@@ -18,6 +18,7 @@ typedef enum symbol {
     pusto = '_', //0
     nolik = 'O', //1
     krestik = 'X', //2
+    dot = '.' //3
 } symbol;
 
 typedef struct {
@@ -795,19 +796,69 @@ symbol check_state(square** desk, int kolvoKletok) {
     }
     for (int i = 0; i < kolvoKletok; ++i) {
         for (int j = 0; j < kolvoKletok; ++j) {
-            if (desk[i][j].sign == pusto) {
-                //printf("found en empty square, CONTINUE GAME\n");
+            if (desk[i][j].sign == pusto || desk[i][j].sign == dot) {
                 return 4; // found en empty square, CONTINUE GAME
             }
         }
     }
-    printf("DRAW!!!\n");
     return 0; // DRAW
+}
+
+void putDot(square** desk, int kolvoKletok) {
+    for (int i = 0; i < kolvoKletok; i++) {
+        for (int j = 0; j < kolvoKletok; j++) {
+            if (desk[i][j].sign != pusto) continue;
+            if (i - 1 > 0) {
+                if (desk[i - 1][j].sign == 'X' || desk[i - 1][j].sign == 'O') {
+                    desk[i][j].sign = dot;
+                    continue;
+                }
+                if (j - 1 > 0 && (desk[i - 1][j - 1].sign == 'X' || desk[i - 1][j - 1].sign == 'O')) {
+                    desk[i][j].sign = dot;
+                    continue;
+                }
+                if (j + 1 < kolvoKletok && (desk[i - 1][j + 1].sign == 'X' || desk[i - 1][j + 1].sign == 'O')) {
+                    desk[i][j].sign = dot;
+                    continue;
+                }
+            }
+            if (i + 1 < kolvoKletok) {
+                if (desk[i + 1][j].sign == 'X' || desk[i + 1][j].sign == 'O') {
+                    desk[i][j].sign = dot;
+                    continue;
+                }
+                if (j - 1 > 0 && (desk[i + 1][j - 1].sign == 'X' || desk[i + 1][j - 1].sign == 'O')) {
+                    desk[i][j].sign = dot;
+                    continue;
+                }
+                if (j + 1 < kolvoKletok && (desk[i + 1][j + 1].sign == 'X' || desk[i + 1][j + 1].sign == 'O')) {
+                    desk[i][j].sign = dot;
+                    continue;
+                }
+            }
+            if (j - 1 > 0 && (desk[i][j - 1].sign == 'X' || desk[i][j - 1].sign == 'O')) {
+                desk[i][j].sign = dot;
+                continue;
+            }
+            if (j + 1 < kolvoKletok && (desk[i][j + 1].sign == 'X' || desk[i][j + 1].sign == 'O')) {
+                desk[i][j].sign = dot;
+                continue;
+            }
+        }
+    }
+}
+
+void eraseDot(square** desk, int kolvoKletok) {
+    for (int i = 0; i < kolvoKletok; i++) {
+        for (int j = 0; j < kolvoKletok; j++) {
+            if (desk[i][j].sign == dot) desk[i][j].sign = pusto;
+        }
+    }
 }
 
 
 int minimax(int depth, symbol player, int kolvoKletok, square** desk) {
-    if (depth < 3) {
+    if (depth < 4) {
         symbol stat = check_state(desk, kolvoKletok);
         if (stat == bot_move) return 100 - depth;
         else if (stat == player_move) return -100 + depth;
@@ -816,10 +867,13 @@ int minimax(int depth, symbol player, int kolvoKletok, square** desk) {
             int best_score = -INFINITY;
             for (int i = 0; i < kolvoKletok; i++) {
                 for (int j = 0; j < kolvoKletok; j++) {
-                    if (desk[i][j].sign == pusto) {
+                    if (desk[i][j].sign == dot) {
                         desk[i][j].sign = bot_move;
+                        putDot(desk, kolvoKletok);
                         int score = minimax(depth + 1, player_move, kolvoKletok, desk);
                         desk[i][j].sign = pusto;
+                        eraseDot(desk, kolvoKletok);
+                        putDot(desk, kolvoKletok);
                         best_score = fmax(best_score, score);
                     }
                 }
@@ -830,10 +884,13 @@ int minimax(int depth, symbol player, int kolvoKletok, square** desk) {
             int best_score = INFINITY;
             for (int i = 0; i < kolvoKletok; i++) {
                 for (int j = 0; j < kolvoKletok; j++) {
-                    if (desk[i][j].sign == pusto) {
+                    if (desk[i][j].sign == dot) {
                         desk[i][j].sign = player_move;
+                        putDot(desk, kolvoKletok);
                         int score = minimax(depth + 1, bot_move, kolvoKletok, desk);
                         desk[i][j].sign = pusto;
+                        eraseDot(desk, kolvoKletok);
+                        putDot(desk, kolvoKletok);
                         best_score = fmin(best_score, score);
                     }
                 }
@@ -851,10 +908,13 @@ squarePriority get_move_minimax(square** desk, int kolvoKletok) {
     bestMove.coordy = -1;
     for (int i = 0; i < kolvoKletok; i++) {
         for (int j = 0; j < kolvoKletok; j++) {
-            if (desk[i][j].sign == pusto) {
+            if (desk[i][j].sign == dot) {
                 desk[i][j].sign = bot_move;
+                putDot(desk, kolvoKletok);
                 int score = minimax(0, player_move, kolvoKletok, desk);
                 desk[i][j].sign = pusto;
+                eraseDot(desk, kolvoKletok);
+                putDot(desk, kolvoKletok);
 
                 if (score > best_score && best_score > 0) {
                     best_score = score;
@@ -1049,16 +1109,22 @@ int main(void) {
                 if (step == 5 || step == 6) continue;
 
                 double time1 = clock();
-                //do_first_step(desk, kolvoKletok, turn);
-                squarePriority bot_next_move = get_move_minimax(desk, kolvoKletok);
-                coordx = bot_next_move.coordx;
-                coordy = bot_next_move.coordy;
-                if (coordx == -1 && coordy == -1) {
+                if (turn < 6) {
                     do_first_step(desk, kolvoKletok, turn);
                 }
                 else {
-                    if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
-                    else desk[coordx][coordy].sign = nolik;
+                    putDot(desk, kolvoKletok);
+                    squarePriority bot_next_move = get_move_minimax(desk, kolvoKletok);
+                    coordx = bot_next_move.coordx;
+                    coordy = bot_next_move.coordy;
+                    eraseDot(desk, kolvoKletok);
+                    if (coordx == -1 && coordy == -1) {
+                        do_first_step(desk, kolvoKletok, turn);
+                    }
+                    else {
+                        if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
+                        else desk[coordx][coordy].sign = nolik;
+                    }
                 }
                 double time2 = clock();
                 double operating_time = (time2 - time1) / CLOCKS_PER_SEC;
