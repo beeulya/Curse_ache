@@ -1013,17 +1013,15 @@ int main(void) {
                 glClear(GL_COLOR_BUFFER_BIT);
                 if (x > (windowSize / 2) * 0.28 && x < (windowSize / 2) * 1.72 && y >(windowSize / 2) * 0.45 && y < (windowSize / 2) * 0.76) {
                     kolvoKletok = 15;
-                    step++;
                 }
                 else if (x > (windowSize / 2) * 0.28 && x < (windowSize / 2) * 1.72 && y >(windowSize / 2) * 0.83 && y < (windowSize / 2) * 1.16) {
                     kolvoKletok = 25;
-                    step++;
                 }
                 else if (x > (windowSize / 2) * 0.28 && x < (windowSize / 2) * 1.72 && y >(windowSize / 2) * 1.24 && y < (windowSize / 2) * 1.56) {
                     kolvoKletok = 35;
-                    step++;
                 }
                 else continue;
+                step++;
                 desk = (square**)malloc(sizeof(square*) * kolvoKletok);
                 for (short i = 0; i < kolvoKletok; i++) {
                     desk[i] = (square*)malloc(sizeof(square) * kolvoKletok);
@@ -1060,7 +1058,6 @@ int main(void) {
                 if (option == 1) {
                     renderDesk(kolvoKletok, windowSize);
                     glfwSwapBuffers(window);
-                    step++;
                 }
                 else if (option == 2) {
                     coordx = kolvoKletok / 2 + 1;
@@ -1069,11 +1066,11 @@ int main(void) {
                     desk[coordx][coordy].sign = krestik;
                     setPriority(desk, kolvoKletok, coordx, coordy);
                     printDesk(desk, kolvoKletok, window, windowSize);
-                    step++;
                 }
                 else {
                     continue;
                 }
+                step++;
             }
             else if (step == 4) {
                 glClear(GL_COLOR_BUFFER_BIT);
