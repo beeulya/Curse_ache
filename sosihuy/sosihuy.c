@@ -857,7 +857,7 @@ void eraseDot(square** desk, int kolvoKletok) {
 }
 
 
-int minimax(int depth, symbol player, int kolvoKletok, square** desk) {
+int minimax(int depth, symbol player, int alpha, int beta, int kolvoKletok, square** desk) {
     if (depth < 4) {
         symbol stat = check_state(desk, kolvoKletok);
         if (stat == bot_move) return 100 - depth;
@@ -870,13 +870,16 @@ int minimax(int depth, symbol player, int kolvoKletok, square** desk) {
                     if (desk[i][j].sign == dot) {
                         desk[i][j].sign = bot_move;
                         putDot(desk, kolvoKletok);
-                        int score = minimax(depth + 1, player_move, kolvoKletok, desk);
+                        int score = minimax(depth + 1, player_move, alpha, beta, kolvoKletok, desk);
                         desk[i][j].sign = pusto;
                         eraseDot(desk, kolvoKletok);
                         putDot(desk, kolvoKletok);
                         best_score = fmax(best_score, score);
+                        alpha = fmax(best_score, alpha);
+                        if (alpha >= beta) return best_score;
                     }
                 }
+                if (alpha >= beta) return best_score;
             }
             return best_score;
         }
@@ -887,13 +890,16 @@ int minimax(int depth, symbol player, int kolvoKletok, square** desk) {
                     if (desk[i][j].sign == dot) {
                         desk[i][j].sign = player_move;
                         putDot(desk, kolvoKletok);
-                        int score = minimax(depth + 1, bot_move, kolvoKletok, desk);
+                        int score = minimax(depth + 1, bot_move, alpha, beta, kolvoKletok, desk);
                         desk[i][j].sign = pusto;
                         eraseDot(desk, kolvoKletok);
                         putDot(desk, kolvoKletok);
                         best_score = fmin(best_score, score);
+                        beta = fmin(beta, best_score);
+                        if (beta <= alpha) return best_score;
                     }
                 }
+                if (beta <= alpha) return best_score;
             }
             return best_score;
         }
@@ -906,12 +912,14 @@ squarePriority get_move_minimax(square** desk, int kolvoKletok) {
     squarePriority bestMove;
     bestMove.coordx = -1;
     bestMove.coordy = -1;
+    int alpha = -INFINITY;
+    int beta = INFINITY;
     for (int i = 0; i < kolvoKletok; i++) {
         for (int j = 0; j < kolvoKletok; j++) {
             if (desk[i][j].sign == dot) {
                 desk[i][j].sign = bot_move;
                 putDot(desk, kolvoKletok);
-                int score = minimax(0, player_move, kolvoKletok, desk);
+                int score = minimax(0, player_move, alpha, beta, kolvoKletok, desk);
                 desk[i][j].sign = pusto;
                 eraseDot(desk, kolvoKletok);
                 putDot(desk, kolvoKletok);
