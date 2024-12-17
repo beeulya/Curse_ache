@@ -23,17 +23,17 @@ typedef enum symbol {
 
 typedef struct {
     symbol sign;
-    int priority;
-    int line_priority_X;
-    int line_priority_O;
-    int block;
+    short priority;
+    short line_priority_X;
+    short line_priority_O;
+    short block;
 } square;
 
 typedef struct {
-    int coordx;
-    int coordy;
-    int priority;
-    int flag;
+    short coordx;
+    short coordy;
+    short priority;
+    short flag;
 } squarePriority;
 
 //
@@ -42,8 +42,8 @@ symbol bot_move;
 //
 
 //-------------------------------------------   OPENGL  -----------------------------------------
-void putKrestik(int x, int y, int kolvoKletok, int windowSize) {
-    int med = kolvoKletok / 2;
+void putKrestik(short x, short y, short kolvoKletok, short windowSize) {
+    short med = kolvoKletok / 2;
     GLfloat coordx, coordy, shag, delta;
     shag = 2.0f / kolvoKletok;
     coordx = 0.0f - (med - x) * shag;
@@ -60,8 +60,8 @@ void putKrestik(int x, int y, int kolvoKletok, int windowSize) {
     glEnd();
 }
 
-void putNolik(int x, int y, int kolvoKletok, int windowSize) {
-    int med = kolvoKletok / 2;
+void putNolik(short x, short y, short kolvoKletok, short windowSize) {
+    short med = kolvoKletok / 2;
     GLfloat coordx, coordy, shag, rad1, rad2;
     shag = 2.0f / kolvoKletok;
     coordx = 0.0f - (med - x) * shag;
@@ -72,7 +72,7 @@ void putNolik(int x, int y, int kolvoKletok, int windowSize) {
     glColor3f(1.0f, 0.349f, 0.561f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(coordx, coordy);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(coordx + cos(a) * rad1, coordy + sin(a) * rad1);
     }
@@ -80,7 +80,7 @@ void putNolik(int x, int y, int kolvoKletok, int windowSize) {
     glColor3f(0.62f, 0.906f, 0.961f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(coordx, coordy);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(coordx + cos(a) * rad2, coordy + sin(a) * rad2);
     }
@@ -90,7 +90,7 @@ void putNolik(int x, int y, int kolvoKletok, int windowSize) {
 void print_string(float x, float y, char* text, float r, float g, float b)
 {
     static char buffer[99999]; // ~500 chars
-    int num_quads;
+    short num_quads;
 
     num_quads = stb_easy_font_print(x, y, text, NULL, buffer, sizeof(buffer));
 
@@ -101,7 +101,7 @@ void print_string(float x, float y, char* text, float r, float g, float b)
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void mainScreen(int windowSize) {
+void mainScreen(short windowSize) {
     glEnable(GL_SCISSOR_TEST);
     glClearColor(0.62f, 0.906f, 0.961f, 1.0f);
     glScissor(0, 0, windowSize, windowSize);
@@ -121,7 +121,7 @@ void mainScreen(int windowSize) {
 
 }
 
-void chooseDesk(int windowSize) {
+void chooseDesk(short windowSize) {
     glEnable(GL_SCISSOR_TEST);
     glClearColor(0.62f, 0.906f, 0.961f, 1.0f);
     glScissor(0, 0, windowSize, windowSize);
@@ -155,7 +155,7 @@ void chooseDesk(int windowSize) {
     print_string(-20, 22, "35 x 35", 1.0f, 0.349f, 0.561f);
 }
 
-void chooseSymbol(int windowSize) {
+void chooseSymbol(short windowSize) {
     glEnable(GL_SCISSOR_TEST);
     glClearColor(0.62f, 0.906f, 0.961f, 1.0f);
     glScissor(0, 0, windowSize, windowSize);
@@ -191,7 +191,7 @@ void chooseSymbol(int windowSize) {
     glColor3f(1.0f, 0.349f, 0.561f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(30, 10);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(30 + cos(a) * 18, 10 + sin(a) * 18);
     }
@@ -199,14 +199,14 @@ void chooseSymbol(int windowSize) {
     glColor3f(0.137f, 0.431f, 0.588f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(30, 10);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(30 + cos(a) * 12, 10 + sin(a) * 12);
     }
     glEnd();
 }
 
-void victory(int windowSize) {
+void victory(short windowSize) {
     glEnable(GL_SCISSOR_TEST);
     glClearColor(0.62f, 0.906f, 0.961f, 1.0f);
     glScissor(0, 0, windowSize, windowSize);
@@ -220,7 +220,7 @@ void victory(int windowSize) {
     glColor3f(1.0f, 0.843f, 0.0f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(15, 6);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(15 + cos(a) * 9, 6 + sin(a) * 9);
     }
@@ -228,7 +228,7 @@ void victory(int windowSize) {
     glColor3f(0.62f, 0.906f, 0.961f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(15, 6);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(15 + cos(a) * 5, 6 + sin(a) * 5);
     }
@@ -236,7 +236,7 @@ void victory(int windowSize) {
     glColor3f(1.0f, 0.843f, 0.0f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(-15, 6);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(-15 + cos(a) * 9, 6 + sin(a) * 9);
     }
@@ -244,7 +244,7 @@ void victory(int windowSize) {
     glColor3f(0.62f, 0.906f, 0.961f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(-15, 6);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(-15 + cos(a) * 5, 6 + sin(a) * 5);
     }
@@ -253,7 +253,7 @@ void victory(int windowSize) {
     glColor3f(1.0f, 0.843f, 0.0f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(0, 10);
-    for (int i = 0; i <= 50; i++) {
+    for (short i = 0; i <= 50; i++) {
         float a = (float)i / 50.0f * 3.1415f * 2.0f;
         glVertex2f(0 + cos(a) * 15, 10 + sin(a) * 15);
     }
@@ -281,7 +281,7 @@ void victory(int windowSize) {
     glEnd();
 }
 
-void fail(int windowSize) {
+void fail(short windowSize) {
     glEnable(GL_SCISSOR_TEST);
     glClearColor(0.62f, 0.906f, 0.961f, 1.0f);
     glScissor(0, 0, windowSize, windowSize);
@@ -292,13 +292,13 @@ void fail(int windowSize) {
     print_string(-41, -30, "Unfortunately,\n you lost", 0.137f, 0.431f, 0.588f);
 }
 
-void renderDesk(int kolvoKletok, int windowSize) {
+void renderDesk(short kolvoKletok, short windowSize) {
     glEnable(GL_SCISSOR_TEST);
     glClearColor(0.62f, 0.906f, 0.961f, 1.0f);
     glScissor(0, 0, windowSize, windowSize);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    for (int i = 1; i < kolvoKletok; i++) {
+    for (short i = 1; i < kolvoKletok; i++) {
         glEnable(GL_SCISSOR_TEST);
         glClearColor(0.137f, 0.431f, 0.588f, 1.0f);
         float coordx = (float)i * (windowSize / kolvoKletok);
@@ -306,7 +306,7 @@ void renderDesk(int kolvoKletok, int windowSize) {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    for (int i = 1; i < kolvoKletok; i++) {
+    for (short i = 1; i < kolvoKletok; i++) {
         glEnable(GL_SCISSOR_TEST);
         glClearColor(0.137f, 0.431f, 0.588f, 1.0f);
         float coordy = (float)i * (windowSize / kolvoKletok);
@@ -319,32 +319,24 @@ void renderDesk(int kolvoKletok, int windowSize) {
 
 
 //�������� ��� ������ �� ����
-void printDesk(square** desk, int kolvoKletok, GLFWwindow* window, int windowSize) {
-    printf("  ");
-    for (int k = 0; k < kolvoKletok; k++) {
-        printf("%3d", k);
-    }
-    printf("\n");
+void printDesk(square** desk, short kolvoKletok, GLFWwindow* window, short windowSize) {
     renderDesk(kolvoKletok, windowSize);
-    for (int i = 0; i < kolvoKletok; i++) {
-        printf("%3d ", i);
-        for (int j = 0; j < kolvoKletok; j++) {
-            printf("%c  ", desk[i][j].sign);
+    for (short i = 0; i < kolvoKletok; i++) {
+        for (short j = 0; j < kolvoKletok; j++) {
             if (desk[i][j].sign == 'X') putKrestik(j, i, kolvoKletok, windowSize);
             if (desk[i][j].sign == 'O') putNolik(j, i, kolvoKletok, windowSize);
         }
-        printf("\n");
     }
     glfwSwapBuffers(window);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 //�������, ������������� ��������� ������������ ���� �����
-int check_win_Diagonal1(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
+short check_win_Diagonal1(square** desk, short kolvoKletok, short coordx, short coordy, short flag) {
     symbol symb = desk[coordx][coordy].sign;
-    int count = 0;
-    int x = coordx;
-    int y = coordy;
+    short count = 0;
+    short x = coordx;
+    short y = coordy;
     while (x < kolvoKletok && y < kolvoKletok) {
         if (symb == desk[x][y].sign) count++;
         else {
@@ -367,11 +359,11 @@ int check_win_Diagonal1(square** desk, int kolvoKletok, int coordx, int coordy, 
     }
     return count;
 }
-int check_win_Diagonal2(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
+short check_win_Diagonal2(square** desk, short kolvoKletok, short coordx, short coordy, short flag) {
     symbol symb = desk[coordx][coordy].sign;
-    int count = 0;
-    int x = coordx;
-    int y = coordy;
+    short count = 0;
+    short x = coordx;
+    short y = coordy;
     while (x < kolvoKletok && y >= 0) {
         if (symb == desk[x][y].sign) count++;
         else {
@@ -394,8 +386,8 @@ int check_win_Diagonal2(square** desk, int kolvoKletok, int coordx, int coordy, 
     }
     return count;
 }
-symbol checkDiagonals(square** desk, int kolvoKletok) { //check if there are any win position (for minimax)
-    int i, j, k;
+symbol checkDiagonals(square** desk, short kolvoKletok) { //check if there are any win position (for minimax)
+    short i, j, k;
     symbol winner;
     for (i = 0; i <= kolvoKletok - WIN_LEN; i++) {
         for (j = 0; j <= kolvoKletok - WIN_LEN; j++) {
@@ -427,11 +419,11 @@ symbol checkDiagonals(square** desk, int kolvoKletok) { //check if there are any
     winner = pusto;
     return winner;
 }
-int check_win_Gorizont(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
+short check_win_Gorizont(square** desk, short kolvoKletok, short coordx, short coordy, short flag) {
     symbol symb = desk[coordx][coordy].sign;
-    int count = 0;
-    int x = coordx;
-    int y = coordy;
+    short count = 0;
+    short x = coordx;
+    short y = coordy;
     while (x < kolvoKletok) {
         if (symb == desk[x][y].sign) count++;
         else {
@@ -451,8 +443,8 @@ int check_win_Gorizont(square** desk, int kolvoKletok, int coordx, int coordy, i
     }
     return count;
 }
-symbol checkGorizont(square** desk, int kolvoKletok) { //check if there are any win position (for minimax)
-    int i, j, k;
+symbol checkGorizont(square** desk, short kolvoKletok) { //check if there are any win position (for minimax)
+    short i, j, k;
     symbol winner;
     for (i = 0; i < kolvoKletok; i++) {
         for (j = 0; j <= kolvoKletok - WIN_LEN; j++) {
@@ -472,11 +464,11 @@ symbol checkGorizont(square** desk, int kolvoKletok) { //check if there are any 
     winner = pusto;
     return winner;
 }
-int check_win_Vertikal(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
+short check_win_Vertikal(square** desk, short kolvoKletok, short coordx, short coordy, short flag) {
     symbol symb = desk[coordx][coordy].sign;
-    int count = 0;
-    int x = coordx;
-    int y = coordy;
+    short count = 0;
+    short x = coordx;
+    short y = coordy;
     while (y < kolvoKletok) {
         if (symb == desk[x][y].sign) count++;
         else {
@@ -496,8 +488,8 @@ int check_win_Vertikal(square** desk, int kolvoKletok, int coordx, int coordy, i
     }
     return count;
 }
-symbol checkVertikal(square** desk, int kolvoKletok) { //check if there are any win position (for minimax)
-    int i, j, k;
+symbol checkVertikal(square** desk, short kolvoKletok) { //check if there are any win position (for minimax)
+    short i, j, k;
     symbol winner;
     for (i = 0; i < kolvoKletok - WIN_LEN; i++) {
         for (j = 0; j < kolvoKletok; j++) {
@@ -518,12 +510,12 @@ symbol checkVertikal(square** desk, int kolvoKletok) { //check if there are any 
     return winner;
 }
 //���� ����� ������������ ����������� � ��������������� ��� ������ ����
-void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
+void checkLines(square** desk, short kolvoKletok, short coordx, short coordy) {
     squarePriority count;
     count.priority = 0;
     count.flag = 0;
-    int flag = 0;
-    int countDiag1 = check_win_Diagonal1(desk, kolvoKletok, coordx, coordy, flag);
+    short flag = 0;
+    short countDiag1 = check_win_Diagonal1(desk, kolvoKletok, coordx, coordy, flag);
     if (countDiag1 >= count.priority) {
         if (desk[coordx + 1][coordy + 1].sign == pusto && coordx + 1 < kolvoKletok && coordy + 1 < kolvoKletok) {
             count.priority = countDiag1;
@@ -552,7 +544,7 @@ void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
         }
     }
     flag = 0;
-    int countDiag2 = check_win_Diagonal2(desk, kolvoKletok, coordx, coordy, flag);
+    short countDiag2 = check_win_Diagonal2(desk, kolvoKletok, coordx, coordy, flag);
     if (countDiag2 >= count.priority) {
         if (desk[coordx + 1][coordy - 1].sign == pusto && coordx + 1 < kolvoKletok && coordy - 1 >= 0) {
             count.priority = countDiag2;
@@ -580,7 +572,7 @@ void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
         }
     }
     flag = 0;
-    int countGor = check_win_Gorizont(desk, kolvoKletok, coordx, coordy, flag);
+    short countGor = check_win_Gorizont(desk, kolvoKletok, coordx, coordy, flag);
     if (countGor >= count.priority) {
         if (desk[coordx + 1][coordy].sign == pusto && coordx + 1 < kolvoKletok) {
             count.priority = countGor;
@@ -608,7 +600,7 @@ void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
         }
     }
     flag = 0;
-    int countVertik = check_win_Vertikal(desk, kolvoKletok, coordx, coordy, flag);
+    short countVertik = check_win_Vertikal(desk, kolvoKletok, coordx, coordy, flag);
     if (countVertik >= count.priority) {
         if (desk[coordx][coordy + 1].sign == pusto && coordy + 1 < kolvoKletok) {
             count.priority = countVertik;
@@ -637,47 +629,47 @@ void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
     }
 }
 
-int razrivFlyagi(square** desk, int kolvoKletok, int coordx, int coordy, symbol sign) {
-    int priority = 0;
+short razrivFlyagi(square** desk, short kolvoKletok, short coordx, short coordy, symbol sign) {
+    short priority = 0;
     //��� ���������
     if (desk[coordx - 1][coordy - 1].sign == desk[coordx + 1][coordy + 1].sign && desk[coordx - 1][coordy - 1].sign == sign) {
-        int priority1 = check_win_Diagonal1(desk, kolvoKletok, coordx - 1, coordy - 1, 0);
-        int priority2 = check_win_Diagonal1(desk, kolvoKletok, coordx + 1, coordy + 1, 0);
+        short priority1 = check_win_Diagonal1(desk, kolvoKletok, coordx - 1, coordy - 1, 0);
+        short priority2 = check_win_Diagonal1(desk, kolvoKletok, coordx + 1, coordy + 1, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
     if (desk[coordx + 1][coordy - 1].sign == desk[coordx - 1][coordy + 1].sign && desk[coordx + 1][coordy - 1].sign == sign) {
-        int priority1 = check_win_Diagonal2(desk, kolvoKletok, coordx + 1, coordy - 1, 0);
-        int priority2 = check_win_Diagonal2(desk, kolvoKletok, coordx - 1, coordy + 1, 0);
+        short priority1 = check_win_Diagonal2(desk, kolvoKletok, coordx + 1, coordy - 1, 0);
+        short priority2 = check_win_Diagonal2(desk, kolvoKletok, coordx - 1, coordy + 1, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
     //����������� -- ����� ������ � �����
     if (desk[coordx - 1][coordy].sign == desk[coordx + 1][coordy].sign && desk[coordx - 1][coordy].sign == sign) {
-        int priority1 = check_win_Gorizont(desk, kolvoKletok, coordx - 1, coordy, 0);
-        int priority2 = check_win_Gorizont(desk, kolvoKletok, coordx + 1, coordy, 0);
+        short priority1 = check_win_Gorizont(desk, kolvoKletok, coordx - 1, coordy, 0);
+        short priority2 = check_win_Gorizont(desk, kolvoKletok, coordx + 1, coordy, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
     //��������� -- ����� ����� � ������
     if (desk[coordx][coordy - 1].sign == desk[coordx][coordy + 1].sign && desk[coordx][coordy - 1].sign == sign) {
-        int priority1 = check_win_Vertikal(desk, kolvoKletok, coordx, coordy - 1, 0);
-        int priority2 = check_win_Vertikal(desk, kolvoKletok, coordx, coordy + 1, 0);
+        short priority1 = check_win_Vertikal(desk, kolvoKletok, coordx, coordy - 1, 0);
+        short priority2 = check_win_Vertikal(desk, kolvoKletok, coordx, coordy + 1, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
     return priority;
 }
 
 //
-void setPriority(square** desk, int kolvoKletok, int coordx, int coordy, int turn) {
+void setPriority(square** desk, short kolvoKletok, short coordx, short coordy) {
     desk[coordx][coordy].priority = 0;
     desk[coordx][coordy].line_priority_X = 0;
     desk[coordx][coordy].line_priority_O = 0;
     desk[coordx][coordy].block = 0;
-    for (int i = 1; i < kolvoKletok - 1; i++) {
-        for (int j = 1; j < kolvoKletok - 1; j++) {
+    for (short i = 1; i < kolvoKletok - 1; i++) {
+        for (short j = 1; j < kolvoKletok - 1; j++) {
             if (desk[i][j].sign != pusto) checkLines(desk, kolvoKletok, i, j);
 
             else {
-                int flyaga_X = razrivFlyagi(desk, kolvoKletok, i, j, krestik);
-                int flyaga_O = razrivFlyagi(desk, kolvoKletok, i, j, nolik);
+                short flyaga_X = razrivFlyagi(desk, kolvoKletok, i, j, krestik);
+                short flyaga_O = razrivFlyagi(desk, kolvoKletok, i, j, nolik);
                 if (desk[i][j].line_priority_O < flyaga_O) desk[i][j].line_priority_O = flyaga_O;
                 if (desk[i][j].line_priority_X < flyaga_X) desk[i][j].line_priority_X = flyaga_X;
                 if (desk[i][j].priority < flyaga_O) desk[i][j].priority = flyaga_O;
@@ -689,15 +681,15 @@ void setPriority(square** desk, int kolvoKletok, int coordx, int coordy, int tur
 }
 
 //���� ����� �������� ������
-squarePriority checkPositions(square** desk, int kolvoKletok, int turn) {
+squarePriority checkPositions(square** desk, short kolvoKletok) {
     squarePriority maxPrioritet;
     maxPrioritet.priority = 0;
     maxPrioritet.coordx = 0;
     maxPrioritet.coordy = 0;
     maxPrioritet.flag = 0;
-    for (int i = 1; i < kolvoKletok - 1; i++) {
-        for (int j = 1; j < kolvoKletok - 1; j++) {
-            if (turn % 2 == 0) { //�������� ��� ��������
+    for (short i = 1; i < kolvoKletok - 1; i++) {
+        for (short j = 1; j < kolvoKletok - 1; j++) {
+            if (bot_move == krestik) { //�������� ��� ��������
                 if (desk[i][j].line_priority_X == 4 && maxPrioritet.priority < desk[i][j].line_priority_X) { //���� ������� 4 ��������, ������ ����� -- ���������� �������
                     maxPrioritet.priority = desk[i][j].line_priority_X;
                     maxPrioritet.coordx = i;
@@ -734,7 +726,7 @@ squarePriority checkPositions(square** desk, int kolvoKletok, int turn) {
                     maxPrioritet.coordy = j;
                 }
             }
-            if (turn % 2 == 1) { //�������� ��� ������
+            if (bot_move == nolik) { //�������� ��� ������
                 if (desk[i][j].line_priority_O == 4 && maxPrioritet.priority < desk[i][j].line_priority_O) { //���� ������� 4 ������, ������ ����� -- ���������� �������
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
@@ -760,7 +752,7 @@ squarePriority checkPositions(square** desk, int kolvoKletok, int turn) {
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
                 }
-                else if (desk[i][j].line_priority_O >= maxPrioritet.priority && turn != 1 && maxPrioritet.priority < desk[i][j].line_priority_O) { //��������� ������ (������������ ����) -- ����� �������
+                else if (desk[i][j].line_priority_O >= maxPrioritet.priority && maxPrioritet.priority < desk[i][j].line_priority_O) { //��������� ������ (������������ ����) -- ����� �������
                     maxPrioritet.priority = desk[i][j].line_priority_O;
                     maxPrioritet.coordx = i;
                     maxPrioritet.coordy = j;
@@ -778,7 +770,7 @@ squarePriority checkPositions(square** desk, int kolvoKletok, int turn) {
 
 //-------------------------------------
 
-symbol check_state(square** desk, int kolvoKletok) {
+symbol check_state(square** desk, short kolvoKletok) {
     if (desk == NULL) return pusto;
     symbol state;
     state = checkGorizont(desk, kolvoKletok);
@@ -794,8 +786,8 @@ symbol check_state(square** desk, int kolvoKletok) {
     if (state != pusto) {
         return state;
     }
-    for (int i = 0; i < kolvoKletok; ++i) {
-        for (int j = 0; j < kolvoKletok; ++j) {
+    for (short i = 0; i < kolvoKletok; ++i) {
+        for (short j = 0; j < kolvoKletok; ++j) {
             if (desk[i][j].sign == pusto || desk[i][j].sign == dot) {
                 return 4; // found en empty square, CONTINUE GAME
             }
@@ -804,9 +796,9 @@ symbol check_state(square** desk, int kolvoKletok) {
     return 0; // DRAW
 }
 
-void putDot(square** desk, int kolvoKletok) {
-    for (int i = 0; i < kolvoKletok; i++) {
-        for (int j = 0; j < kolvoKletok; j++) {
+void putDot(square** desk, short kolvoKletok) {
+    for (short i = 0; i < kolvoKletok; i++) {
+        for (short j = 0; j < kolvoKletok; j++) {
             if (desk[i][j].sign != pusto) continue;
             if (i - 1 > 0) {
                 if (desk[i - 1][j].sign == 'X' || desk[i - 1][j].sign == 'O') {
@@ -848,29 +840,29 @@ void putDot(square** desk, int kolvoKletok) {
     }
 }
 
-void eraseDot(square** desk, int kolvoKletok) {
-    for (int i = 0; i < kolvoKletok; i++) {
-        for (int j = 0; j < kolvoKletok; j++) {
+void eraseDot(square** desk, short kolvoKletok) {
+    for (short i = 0; i < kolvoKletok; i++) {
+        for (short j = 0; j < kolvoKletok; j++) {
             if (desk[i][j].sign == dot) desk[i][j].sign = pusto;
         }
     }
 }
 
 
-int minimax(int depth, symbol player, int alpha, int beta, int kolvoKletok, square** desk) {
+short minimax(short depth, symbol player, short alpha, short beta, short kolvoKletok, square** desk) {
     if (depth < 4) {
         symbol stat = check_state(desk, kolvoKletok);
         if (stat == bot_move) return 100 - depth;
         else if (stat == player_move) return -100 + depth;
         else if (stat == 0) return 0;
         if (player == bot_move) {
-            int best_score = -INFINITY;
-            for (int i = 0; i < kolvoKletok; i++) {
-                for (int j = 0; j < kolvoKletok; j++) {
+            short best_score = -INFINITY;
+            for (short i = 0; i < kolvoKletok; i++) {
+                for (short j = 0; j < kolvoKletok; j++) {
                     if (desk[i][j].sign == dot) {
                         desk[i][j].sign = bot_move;
                         putDot(desk, kolvoKletok);
-                        int score = minimax(depth + 1, player_move, alpha, beta, kolvoKletok, desk);
+                        short score = minimax(depth + 1, player_move, alpha, beta, kolvoKletok, desk);
                         desk[i][j].sign = pusto;
                         eraseDot(desk, kolvoKletok);
                         putDot(desk, kolvoKletok);
@@ -884,13 +876,13 @@ int minimax(int depth, symbol player, int alpha, int beta, int kolvoKletok, squa
             return best_score;
         }
         else {
-            int best_score = INFINITY;
-            for (int i = 0; i < kolvoKletok; i++) {
-                for (int j = 0; j < kolvoKletok; j++) {
+            short best_score = INFINITY;
+            for (short i = 0; i < kolvoKletok; i++) {
+                for (short j = 0; j < kolvoKletok; j++) {
                     if (desk[i][j].sign == dot) {
                         desk[i][j].sign = player_move;
                         putDot(desk, kolvoKletok);
-                        int score = minimax(depth + 1, bot_move, alpha, beta, kolvoKletok, desk);
+                        short score = minimax(depth + 1, bot_move, alpha, beta, kolvoKletok, desk);
                         desk[i][j].sign = pusto;
                         eraseDot(desk, kolvoKletok);
                         putDot(desk, kolvoKletok);
@@ -907,19 +899,19 @@ int minimax(int depth, symbol player, int alpha, int beta, int kolvoKletok, squa
     return 0;
 }
 
-squarePriority get_move_minimax(square** desk, int kolvoKletok) {
-    int best_score = -INFINITY;
+squarePriority get_move_minimax(square** desk, short kolvoKletok) {
+    short best_score = -INFINITY;
     squarePriority bestMove;
     bestMove.coordx = -1;
     bestMove.coordy = -1;
-    int alpha = -INFINITY;
-    int beta = INFINITY;
-    for (int i = 0; i < kolvoKletok; i++) {
-        for (int j = 0; j < kolvoKletok; j++) {
+    short alpha = -INFINITY;
+    short beta = INFINITY;
+    for (short i = 0; i < kolvoKletok; i++) {
+        for (short j = 0; j < kolvoKletok; j++) {
             if (desk[i][j].sign == dot) {
                 desk[i][j].sign = bot_move;
                 putDot(desk, kolvoKletok);
-                int score = minimax(0, player_move, alpha, beta, kolvoKletok, desk);
+                short score = minimax(0, player_move, alpha, beta, kolvoKletok, desk);
                 desk[i][j].sign = pusto;
                 eraseDot(desk, kolvoKletok);
                 putDot(desk, kolvoKletok);
@@ -935,62 +927,22 @@ squarePriority get_move_minimax(square** desk, int kolvoKletok) {
     return bestMove;
 }
 
-
-//-------------------------------------
-
-
-//�������, ����������� ������� ������
-int checkWin(square** desk, int kolvoKletok, int windowSize, GLFWwindow* window, int option) {
-    for (int i = 0; i < kolvoKletok; i++) {
-        for (int j = 0; j < kolvoKletok; j++) {
-            int pos_X = 0;
-            int pos_O = 0;
-            if (desk[i][j].sign == krestik) {
-                if (pos_X < check_win_Diagonal1(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Diagonal1(desk, kolvoKletok, i, j, 0);
-                if (pos_X < check_win_Diagonal2(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Diagonal2(desk, kolvoKletok, i, j, 0);
-                if (pos_X < check_win_Gorizont(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Gorizont(desk, kolvoKletok, i, j, 0);
-                if (pos_X < check_win_Vertikal(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Vertikal(desk, kolvoKletok, i, j, 0);
-            }
-            if (desk[i][j].sign == nolik) {
-                if (pos_O < check_win_Diagonal1(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Diagonal1(desk, kolvoKletok, i, j, 0);
-                if (pos_O < check_win_Diagonal2(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Diagonal2(desk, kolvoKletok, i, j, 0);
-                if (pos_O < check_win_Gorizont(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Gorizont(desk, kolvoKletok, i, j, 0);
-                if (pos_O < check_win_Vertikal(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Vertikal(desk, kolvoKletok, i, j, 0);
-            }
-            if (pos_O >= WIN_LEN) { // 5
-                printf("Nolik won!!! Congrat!!!");
-                if (option == 1) return 6;
-                else return 5;
-            }
-            else if (pos_X >= WIN_LEN) { // 5
-                printf("Krestik won!!! Congrat!!!");
-                if (option == 1) return 5;
-                else return 6;
-            }
-        }
-    }
-    return 4;
-}
-
-//---------------------------------------------------------------------------------------------------
-void do_first_step(square** desk, int kolvoKletok, int turn) {
-    squarePriority bot_next_move = checkPositions(desk, kolvoKletok, turn);
-    int coordx = bot_next_move.coordx;
-    int coordy = bot_next_move.coordy;
-    if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
-    else desk[coordx][coordy].sign = nolik;
-    setPriority(desk, kolvoKletok, coordx, coordy, turn);
+void do_first_step(square** desk, short kolvoKletok) {
+    squarePriority bot_next_move = checkPositions(desk, kolvoKletok);
+    short coordx = bot_next_move.coordx;
+    short coordy = bot_next_move.coordy;
+    desk[coordx][coordy].sign = bot_move;
+    setPriority(desk, kolvoKletok, coordx, coordy);
 }
 
 
 int main(void) {
-    int popa = 0;
-    int kolvoKletok = 0;
+    short kolvoKletok = 0;
     square** desk;
-    int option = 0;
+    short option = 0;
 
     GLFWwindow* window;
-    int windowSize = 1050;
+    short windowSize = 1050;
 
     if (!glfwInit())return -1;
 
@@ -1002,11 +954,11 @@ int main(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     glfwMakeContextCurrent(window);
     double x, y;
-    int flag = 0;
+    short flag = 0;
     glClear(GL_COLOR_BUFFER_BIT);
-    int step = 0;
-    int coordx = 0, coordy = 0;
-    int turn;
+    short step = 0;
+    short coordx = 0, coordy = 0;
+    symbol winner;
     glScalef(0.016, -0.016, 1);
     mainScreen(windowSize);
     glfwSwapBuffers(window);
@@ -1029,25 +981,22 @@ int main(void) {
             else if (step == 1) {
                 glClear(GL_COLOR_BUFFER_BIT);
                 if (x > (windowSize / 2) * 0.28 && x < (windowSize / 2) * 1.72 && y >(windowSize / 2) * 0.45 && y < (windowSize / 2) * 0.76) {
-                    popa = 15;
-                    step++;
+                    kolvoKletok = 15;
                 }
                 else if (x > (windowSize / 2) * 0.28 && x < (windowSize / 2) * 1.72 && y >(windowSize / 2) * 0.83 && y < (windowSize / 2) * 1.16) {
-                    popa = 25;
-                    step++;
+                    kolvoKletok = 25;
                 }
                 else if (x > (windowSize / 2) * 0.28 && x < (windowSize / 2) * 1.72 && y >(windowSize / 2) * 1.24 && y < (windowSize / 2) * 1.56) {
-                    popa = 35;
-                    step++;
+                    kolvoKletok = 35;
                 }
                 else continue;
-                kolvoKletok = popa;
+                step++;
                 desk = (square**)malloc(sizeof(square*) * kolvoKletok);
-                for (int i = 0; i < kolvoKletok; i++) {
+                for (short i = 0; i < kolvoKletok; i++) {
                     desk[i] = (square*)malloc(sizeof(square) * kolvoKletok);
                 }
-                for (int i = 0; i < kolvoKletok; i++) {
-                    for (int j = 0; j < kolvoKletok; j++) {
+                for (short i = 0; i < kolvoKletok; i++) {
+                    for (short j = 0; j < kolvoKletok; j++) {
                         desk[i][j].priority = 0;
                         desk[i][j].line_priority_X = 0;
                         desk[i][j].line_priority_O = 0;
@@ -1065,14 +1014,12 @@ int main(void) {
                 if (x > (windowSize / 2) * 0.3 && x < (windowSize / 2) * 0.86 && y >(windowSize / 2) * 0.86 && y < (windowSize / 2) * 1.42) {
                     option = 1;
                     step++;
-                    printf("Krestik");
                     player_move = krestik;
                     bot_move = nolik;
                 }
                 else if (x > (windowSize / 2) * 1.14 && x < (windowSize / 2) * 1.7 && y >(windowSize / 2) * 0.86 && y < (windowSize / 2) * 1.42) {
                     option = 2;
                     step++;
-                    printf("Nolik");
                     player_move = nolik;
                     bot_move = krestik;
                 }
@@ -1080,68 +1027,65 @@ int main(void) {
                 if (option == 1) {
                     renderDesk(kolvoKletok, windowSize);
                     glfwSwapBuffers(window);
-                    turn = 0;
-                    step++;
                 }
-                else if (option == 2) { // bot plays for krosses
-                    turn = 0;
+                else if (option == 2) {
                     coordx = kolvoKletok / 2 + 1;
                     coordy = kolvoKletok / 2 + 1;
                     if (desk == NULL) return 1;
                     desk[coordx][coordy].sign = krestik;
-                    setPriority(desk, kolvoKletok, coordx, coordy, turn);
-                    turn++;
+                    setPriority(desk, kolvoKletok, coordx, coordy);
                     printDesk(desk, kolvoKletok, window, windowSize);
-                    step++;
                 }
                 else {
-                    printf("Ups! Incorrect option!");
                     continue;
                 }
+                step++;
             }
             else if (step == 4) {
                 glClear(GL_COLOR_BUFFER_BIT);
-                coordy = ((int)x / (windowSize / kolvoKletok));
-                coordx = ((int)y / (windowSize / kolvoKletok));
-                printf("(%d %d)\n", coordx, coordy);
+                coordy = ((short)x / (windowSize / kolvoKletok));
+                coordx = ((short)y / (windowSize / kolvoKletok));
                 if (desk[coordx][coordy].sign != pusto) {
-                    printf("Oh no! There is already a sign here!\n");
                     continue;
                 }
-                if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
-                else desk[coordx][coordy].sign = nolik;
-                setPriority(desk, kolvoKletok, coordx, coordy, turn);
-                turn++;
+                desk[coordx][coordy].sign = player_move;
+                setPriority(desk, kolvoKletok, coordx, coordy);
                 printDesk(desk, kolvoKletok, window, windowSize);
-                if (turn > 6) step = checkWin(desk, kolvoKletok, windowSize, window, option);
-                if (step == 5 || step == 6) continue;
+                winner = check_state(desk, kolvoKletok);
+                if (winner == player_move) {
+                    step = 5;
+                    continue;
+                }
+                else if (winner == bot_move) {
+                    step = 6;
+                    continue;
+                }
 
                 double time1 = clock();
-                if (turn < 6) {
-                    do_first_step(desk, kolvoKletok, turn);
+                putDot(desk, kolvoKletok);
+                squarePriority bot_next_move = get_move_minimax(desk, kolvoKletok);
+                coordx = bot_next_move.coordx;
+                coordy = bot_next_move.coordy;
+                eraseDot(desk, kolvoKletok);
+                if (coordx == -1 && coordy == -1) {
+                    do_first_step(desk, kolvoKletok);
                 }
                 else {
-                    putDot(desk, kolvoKletok);
-                    squarePriority bot_next_move = get_move_minimax(desk, kolvoKletok);
-                    coordx = bot_next_move.coordx;
-                    coordy = bot_next_move.coordy;
-                    eraseDot(desk, kolvoKletok);
-                    if (coordx == -1 && coordy == -1) {
-                        do_first_step(desk, kolvoKletok, turn);
-                    }
-                    else {
-                        if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
-                        else desk[coordx][coordy].sign = nolik;
-                    }
+                    desk[coordx][coordy].sign = bot_move;
                 }
                 double time2 = clock();
                 double operating_time = (time2 - time1) / CLOCKS_PER_SEC;
-                turn++;
                 printDesk(desk, kolvoKletok, window, windowSize);
                 printf("Algorithm time operating: %f\n", operating_time);
-                if (turn > 6) step = checkWin(desk, kolvoKletok, windowSize, window, option);
-                // swap for 'ckeck_state' (izbavitsa ot functsiy)
-                if (step == 5 || step == 6) continue;
+                winner = check_state(desk, kolvoKletok);
+                if (winner == player_move) {
+                    step = 5;
+                    continue;
+                }
+                else if (winner == bot_move) {
+                    step = 6;
+                    continue;
+                }
             }
             else if (step == 5) {
                 step += 2;
@@ -1164,7 +1108,7 @@ int main(void) {
 
     glfwTerminate();
 
-    for (int i = 0; i < kolvoKletok; i++) {
+    for (short i = 0; i < kolvoKletok; i++) {
         free(desk[i]);
     }
     free(desk);
