@@ -320,20 +320,12 @@ void renderDesk(int kolvoKletok, int windowSize) {
 
 //�������� ��� ������ �� ����
 void printDesk(square** desk, int kolvoKletok, GLFWwindow* window, int windowSize) {
-    printf("  ");
-    for (int k = 0; k < kolvoKletok; k++) {
-        printf("%3d", k);
-    }
-    printf("\n");
     renderDesk(kolvoKletok, windowSize);
     for (int i = 0; i < kolvoKletok; i++) {
-        printf("%3d ", i);
         for (int j = 0; j < kolvoKletok; j++) {
-            printf("%c  ", desk[i][j].sign);
             if (desk[i][j].sign == 'X') putKrestik(j, i, kolvoKletok, windowSize);
             if (desk[i][j].sign == 'O') putNolik(j, i, kolvoKletok, windowSize);
         }
-        printf("\n");
     }
     glfwSwapBuffers(window);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -936,9 +928,6 @@ squarePriority get_move_minimax(square** desk, int kolvoKletok) {
 }
 
 
-//-------------------------------------
-
-
 //�������, ����������� ������� ������
 int checkWin(square** desk, int kolvoKletok, int windowSize, GLFWwindow* window, int option) {
     for (int i = 0; i < kolvoKletok; i++) {
@@ -958,12 +947,10 @@ int checkWin(square** desk, int kolvoKletok, int windowSize, GLFWwindow* window,
                 if (pos_O < check_win_Vertikal(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Vertikal(desk, kolvoKletok, i, j, 0);
             }
             if (pos_O >= WIN_LEN) { // 5
-                printf("Nolik won!!! Congrat!!!");
                 if (option == 1) return 6;
                 else return 5;
             }
             else if (pos_X >= WIN_LEN) { // 5
-                printf("Krestik won!!! Congrat!!!");
                 if (option == 1) return 5;
                 else return 6;
             }
@@ -972,7 +959,6 @@ int checkWin(square** desk, int kolvoKletok, int windowSize, GLFWwindow* window,
     return 4;
 }
 
-//---------------------------------------------------------------------------------------------------
 void do_first_step(square** desk, int kolvoKletok) {
     squarePriority bot_next_move = checkPositions(desk, kolvoKletok);
     int coordx = bot_next_move.coordx;
@@ -1061,14 +1047,12 @@ int main(void) {
                 if (x > (windowSize / 2) * 0.3 && x < (windowSize / 2) * 0.86 && y >(windowSize / 2) * 0.86 && y < (windowSize / 2) * 1.42) {
                     option = 1;
                     step++;
-                    printf("Krestik");
                     player_move = krestik;
                     bot_move = nolik;
                 }
                 else if (x > (windowSize / 2) * 1.14 && x < (windowSize / 2) * 1.7 && y >(windowSize / 2) * 0.86 && y < (windowSize / 2) * 1.42) {
                     option = 2;
                     step++;
-                    printf("Nolik");
                     player_move = nolik;
                     bot_move = krestik;
                 }
@@ -1078,7 +1062,7 @@ int main(void) {
                     glfwSwapBuffers(window);
                     step++;
                 }
-                else if (option == 2) { // bot plays for krosses
+                else if (option == 2) {
                     coordx = kolvoKletok / 2 + 1;
                     coordy = kolvoKletok / 2 + 1;
                     if (desk == NULL) return 1;
@@ -1088,7 +1072,6 @@ int main(void) {
                     step++;
                 }
                 else {
-                    printf("Ups! Incorrect option!");
                     continue;
                 }
             }
@@ -1096,9 +1079,7 @@ int main(void) {
                 glClear(GL_COLOR_BUFFER_BIT);
                 coordy = ((int)x / (windowSize / kolvoKletok));
                 coordx = ((int)y / (windowSize / kolvoKletok));
-                printf("(%d %d)\n", coordx, coordy);
                 if (desk[coordx][coordy].sign != pusto) {
-                    printf("Oh no! There is already a sign here!\n");
                     continue;
                 }
                 desk[coordx][coordy].sign = player_move;
@@ -1123,7 +1104,7 @@ int main(void) {
                 double operating_time = (time2 - time1) / CLOCKS_PER_SEC;
                 printDesk(desk, kolvoKletok, window, windowSize);
                 printf("Algorithm time operating: %f\n", operating_time);
-                /*if (turn > 6)*/ step = checkWin(desk, kolvoKletok, windowSize, window, option);
+                step = checkWin(desk, kolvoKletok, windowSize, window, option);
                 if (step == 5 || step == 6) continue;
             }
             else if (step == 5) {
