@@ -927,38 +927,6 @@ squarePriority get_move_minimax(square** desk, short kolvoKletok) {
     return bestMove;
 }
 
-
-//�������, ����������� ������� ������
-short checkWin(square** desk, short kolvoKletok, short windowSize, GLFWwindow* window, short option) {
-    for (short i = 0; i < kolvoKletok; i++) {
-        for (short j = 0; j < kolvoKletok; j++) {
-            short pos_X = 0;
-            short pos_O = 0;
-            if (desk[i][j].sign == krestik) {
-                if (pos_X < check_win_Diagonal1(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Diagonal1(desk, kolvoKletok, i, j, 0);
-                if (pos_X < check_win_Diagonal2(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Diagonal2(desk, kolvoKletok, i, j, 0);
-                if (pos_X < check_win_Gorizont(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Gorizont(desk, kolvoKletok, i, j, 0);
-                if (pos_X < check_win_Vertikal(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Vertikal(desk, kolvoKletok, i, j, 0);
-            }
-            if (desk[i][j].sign == nolik) {
-                if (pos_O < check_win_Diagonal1(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Diagonal1(desk, kolvoKletok, i, j, 0);
-                if (pos_O < check_win_Diagonal2(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Diagonal2(desk, kolvoKletok, i, j, 0);
-                if (pos_O < check_win_Gorizont(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Gorizont(desk, kolvoKletok, i, j, 0);
-                if (pos_O < check_win_Vertikal(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Vertikal(desk, kolvoKletok, i, j, 0);
-            }
-            if (pos_O >= WIN_LEN) { // 5
-                if (option == 1) return 6;
-                else return 5;
-            }
-            else if (pos_X >= WIN_LEN) { // 5
-                if (option == 1) return 5;
-                else return 6;
-            }
-        }
-    }
-    return 4;
-}
-
 void do_first_step(square** desk, short kolvoKletok) {
     squarePriority bot_next_move = checkPositions(desk, kolvoKletok);
     short coordx = bot_next_move.coordx;
@@ -990,6 +958,7 @@ int main(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     short step = 0;
     short coordx = 0, coordy = 0;
+    symbol winner;
     glScalef(0.016, -0.016, 1);
     mainScreen(windowSize);
     glfwSwapBuffers(window);
@@ -1082,8 +1051,15 @@ int main(void) {
                 desk[coordx][coordy].sign = player_move;
                 setPriority(desk, kolvoKletok, coordx, coordy);
                 printDesk(desk, kolvoKletok, window, windowSize);
-                step = checkWin(desk, kolvoKletok, windowSize, window, option);
-                if (step == 5 || step == 6) continue;
+                winner = check_state(desk, kolvoKletok);
+                if (winner == player_move) {
+                    step = 5;
+                    continue;
+                }
+                else if (winner == bot_move) {
+                    step = 6;
+                    continue;
+                }
 
                 double time1 = clock();
                 putDot(desk, kolvoKletok);
@@ -1101,8 +1077,15 @@ int main(void) {
                 double operating_time = (time2 - time1) / CLOCKS_PER_SEC;
                 printDesk(desk, kolvoKletok, window, windowSize);
                 printf("Algorithm time operating: %f\n", operating_time);
-                step = checkWin(desk, kolvoKletok, windowSize, window, option);
-                if (step == 5 || step == 6) continue;
+                winner = check_state(desk, kolvoKletok);
+                if (winner == player_move) {
+                    step = 5;
+                    continue;
+                }
+                else if (winner == bot_move) {
+                    step = 6;
+                    continue;
+                }
             }
             else if (step == 5) {
                 step += 2;
