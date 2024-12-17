@@ -1,7 +1,7 @@
 #pragma warning(disable:4996)
 #pragma warning(disable:4703)
 #include <stdlib.h>
-#include <string.h> 
+#include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include <GLFW/glfw3.h>
@@ -11,11 +11,13 @@
 #define INCLUDE_STB_EASY_FONT_H
 #define INT_MIN -1000
 #define INT_MAX 1000
+#define INFINITY 1000
+#define WIN_LEN 5
 
 typedef enum symbol {
-    pusto = '_',
-    nolik = 'O',
-    krestik = 'X',
+    pusto = '_', //0
+    nolik = 'O', //1
+    krestik = 'X', //2
 } symbol;
 
 typedef struct {
@@ -32,6 +34,11 @@ typedef struct {
     int priority;
     int flag;
 } squarePriority;
+
+//
+symbol player_move;
+symbol bot_move;
+//
 
 //-------------------------------------------   OPENGL  -----------------------------------------
 void putKrestik(int x, int y, int kolvoKletok, int windowSize) {
@@ -332,7 +339,7 @@ void printDesk(square** desk, int kolvoKletok, GLFWwindow* window, int windowSiz
 }
 
 //�������, ������������� ��������� ������������ ���� �����
-int checkDiagonal1(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
+int check_win_Diagonal1(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
     symbol symb = desk[coordx][coordy].sign;
     int count = 0;
     int x = coordx;
@@ -359,7 +366,7 @@ int checkDiagonal1(square** desk, int kolvoKletok, int coordx, int coordy, int f
     }
     return count;
 }
-int checkDiagonal2(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
+int check_win_Diagonal2(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
     symbol symb = desk[coordx][coordy].sign;
     int count = 0;
     int x = coordx;
@@ -386,7 +393,40 @@ int checkDiagonal2(square** desk, int kolvoKletok, int coordx, int coordy, int f
     }
     return count;
 }
-int checkGorizont(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
+symbol checkDiagonals(square** desk, int kolvoKletok) { //check if there are any win position (for minimax)
+    int i, j, k;
+    symbol winner;
+    for (i = 0; i <= kolvoKletok - WIN_LEN; i++) {
+        for (j = 0; j <= kolvoKletok - WIN_LEN; j++) {
+            if (desk[i][j].sign == krestik || desk[i][j].sign == nolik) {
+                winner = desk[i][j].sign;
+                for (k = 1; k < WIN_LEN; k++) {
+                    if (desk[i + k][j + k].sign != winner)
+                    {
+                        break;
+                    }
+                }
+                if (k == WIN_LEN) {
+                    return winner;
+                }
+            }
+            if (desk[i][j + WIN_LEN - 1].sign == krestik || desk[i][j + WIN_LEN - 1].sign == nolik) {
+                winner = desk[i][j + WIN_LEN - 1].sign;
+                for (k = 1; k < WIN_LEN; k++) {
+                    if (desk[i + k][j + WIN_LEN - 1 - k].sign != winner) {
+                        break;
+                    }
+                }
+                if (k == WIN_LEN) {
+                    return winner;
+                }
+            }
+        }
+    }
+    winner = pusto;
+    return winner;
+}
+int check_win_Gorizont(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
     symbol symb = desk[coordx][coordy].sign;
     int count = 0;
     int x = coordx;
@@ -410,7 +450,28 @@ int checkGorizont(square** desk, int kolvoKletok, int coordx, int coordy, int fl
     }
     return count;
 }
-int checkVertikal(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
+symbol checkGorizont(square** desk, int kolvoKletok) { //check if there are any win position (for minimax)
+    int i, j, k;
+    symbol winner;
+    for (i = 0; i < kolvoKletok; i++) {
+        for (j = 0; j <= kolvoKletok - WIN_LEN; j++) {
+            if (desk[i][j].sign == krestik || desk[i][j].sign == nolik) {
+                winner = desk[i][j].sign;
+                for (k = 1; k < WIN_LEN; k++) {
+                    if (desk[i][j + k].sign != winner) {
+                        break;
+                    }
+                }
+                if (k == WIN_LEN) {
+                    return winner;
+                }
+            }
+        }
+    }
+    winner = pusto;
+    return winner;
+}
+int check_win_Vertikal(square** desk, int kolvoKletok, int coordx, int coordy, int flag) {
     symbol symb = desk[coordx][coordy].sign;
     int count = 0;
     int x = coordx;
@@ -434,13 +495,34 @@ int checkVertikal(square** desk, int kolvoKletok, int coordx, int coordy, int fl
     }
     return count;
 }
+symbol checkVertikal(square** desk, int kolvoKletok) { //check if there are any win position (for minimax)
+    int i, j, k;
+    symbol winner;
+    for (i = 0; i < kolvoKletok - WIN_LEN; i++) {
+        for (j = 0; j < kolvoKletok; j++) {
+            if (desk[i][j].sign == krestik || desk[i][j].sign == nolik) {
+                winner = desk[i][j].sign;
+                for (k = 1; k < WIN_LEN; k++) {
+                    if (desk[i + k][j].sign != winner) {
+                        break;
+                    }
+                }
+                if (k == WIN_LEN) {
+                    return winner;
+                }
+            }
+        }
+    }
+    winner = pusto;
+    return winner;
+}
 //���� ����� ������������ ����������� � ��������������� ��� ������ ����
 void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
     squarePriority count;
     count.priority = 0;
     count.flag = 0;
     int flag = 0;
-    int countDiag1 = checkDiagonal1(desk, kolvoKletok, coordx, coordy, flag);
+    int countDiag1 = check_win_Diagonal1(desk, kolvoKletok, coordx, coordy, flag);
     if (countDiag1 >= count.priority) {
         if (desk[coordx + 1][coordy + 1].sign == pusto && coordx + 1 < kolvoKletok && coordy + 1 < kolvoKletok) {
             count.priority = countDiag1;
@@ -469,7 +551,7 @@ void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
         }
     }
     flag = 0;
-    int countDiag2 = checkDiagonal2(desk, kolvoKletok, coordx, coordy, flag);
+    int countDiag2 = check_win_Diagonal2(desk, kolvoKletok, coordx, coordy, flag);
     if (countDiag2 >= count.priority) {
         if (desk[coordx + 1][coordy - 1].sign == pusto && coordx + 1 < kolvoKletok && coordy - 1 >= 0) {
             count.priority = countDiag2;
@@ -497,7 +579,7 @@ void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
         }
     }
     flag = 0;
-    int countGor = checkGorizont(desk, kolvoKletok, coordx, coordy, flag);
+    int countGor = check_win_Gorizont(desk, kolvoKletok, coordx, coordy, flag);
     if (countGor >= count.priority) {
         if (desk[coordx + 1][coordy].sign == pusto && coordx + 1 < kolvoKletok) {
             count.priority = countGor;
@@ -525,7 +607,7 @@ void checkLines(square** desk, int kolvoKletok, int coordx, int coordy) {
         }
     }
     flag = 0;
-    int countVertik = checkVertikal(desk, kolvoKletok, coordx, coordy, flag);
+    int countVertik = check_win_Vertikal(desk, kolvoKletok, coordx, coordy, flag);
     if (countVertik >= count.priority) {
         if (desk[coordx][coordy + 1].sign == pusto && coordy + 1 < kolvoKletok) {
             count.priority = countVertik;
@@ -558,25 +640,25 @@ int razrivFlyagi(square** desk, int kolvoKletok, int coordx, int coordy, symbol 
     int priority = 0;
     //��� ���������
     if (desk[coordx - 1][coordy - 1].sign == desk[coordx + 1][coordy + 1].sign && desk[coordx - 1][coordy - 1].sign == sign) {
-        int priority1 = checkDiagonal1(desk, kolvoKletok, coordx - 1, coordy - 1, 0);
-        int priority2 = checkDiagonal1(desk, kolvoKletok, coordx + 1, coordy + 1, 0);
+        int priority1 = check_win_Diagonal1(desk, kolvoKletok, coordx - 1, coordy - 1, 0);
+        int priority2 = check_win_Diagonal1(desk, kolvoKletok, coordx + 1, coordy + 1, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
     if (desk[coordx + 1][coordy - 1].sign == desk[coordx - 1][coordy + 1].sign && desk[coordx + 1][coordy - 1].sign == sign) {
-        int priority1 = checkDiagonal2(desk, kolvoKletok, coordx + 1, coordy - 1, 0);
-        int priority2 = checkDiagonal2(desk, kolvoKletok, coordx - 1, coordy + 1, 0);
+        int priority1 = check_win_Diagonal2(desk, kolvoKletok, coordx + 1, coordy - 1, 0);
+        int priority2 = check_win_Diagonal2(desk, kolvoKletok, coordx - 1, coordy + 1, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
     //����������� -- ����� ������ � �����
     if (desk[coordx - 1][coordy].sign == desk[coordx + 1][coordy].sign && desk[coordx - 1][coordy].sign == sign) {
-        int priority1 = checkGorizont(desk, kolvoKletok, coordx - 1, coordy, 0);
-        int priority2 = checkGorizont(desk, kolvoKletok, coordx + 1, coordy, 0);
+        int priority1 = check_win_Gorizont(desk, kolvoKletok, coordx - 1, coordy, 0);
+        int priority2 = check_win_Gorizont(desk, kolvoKletok, coordx + 1, coordy, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
     //��������� -- ����� ����� � ������
     if (desk[coordx][coordy - 1].sign == desk[coordx][coordy + 1].sign && desk[coordx][coordy - 1].sign == sign) {
-        int priority1 = checkVertikal(desk, kolvoKletok, coordx, coordy - 1, 0);
-        int priority2 = checkVertikal(desk, kolvoKletok, coordx, coordy + 1, 0);
+        int priority1 = check_win_Vertikal(desk, kolvoKletok, coordx, coordy - 1, 0);
+        int priority2 = check_win_Vertikal(desk, kolvoKletok, coordx, coordy + 1, 0);
         if (priority1 + priority2 >= priority) priority = priority1 + priority2;
     }
     return priority;
@@ -695,97 +777,95 @@ squarePriority checkPositions(square** desk, int kolvoKletok, int turn) {
 
 //-------------------------------------
 
-// Проверка на выигрыш
-int check_win(square** desk, int kolvoKletok, symbol figure) { // почти эквивалентно checkLines
-    for (int i = 0; i < kolvoKletok; i++) {
-        for (int j = 0; j < kolvoKletok; j++) {
-            int pos = 0;
-            if (desk[i][j].sign == figure) {
-                if (pos < checkDiagonal1(desk, kolvoKletok, i, j, 0)) pos = checkDiagonal1(desk, kolvoKletok, i, j, 0);
-                if (pos < checkDiagonal2(desk, kolvoKletok, i, j, 0)) pos = checkDiagonal2(desk, kolvoKletok, i, j, 0);
-                if (pos < checkGorizont(desk, kolvoKletok, i, j, 0)) pos = checkGorizont(desk, kolvoKletok, i, j, 0);
-                if (pos < checkVertikal(desk, kolvoKletok, i, j, 0)) pos = checkVertikal(desk, kolvoKletok, i, j, 0);
+symbol check_state(square** desk, int kolvoKletok) {
+    if (desk == NULL) return pusto;
+    symbol state;
+    state = checkGorizont(desk, kolvoKletok);
+    if (state != pusto) {
+        return state;
+    }
+
+    state = checkVertikal(desk, kolvoKletok);
+    if (state != pusto) {
+        return state;
+    }
+    state = checkDiagonals(desk, kolvoKletok);
+    if (state != pusto) {
+        return state;
+    }
+    for (int i = 0; i < kolvoKletok; ++i) {
+        for (int j = 0; j < kolvoKletok; ++j) {
+            if (desk[i][j].sign == pusto) {
+                //printf("found en empty square, CONTINUE GAME\n");
+                return 4; // found en empty square, CONTINUE GAME
             }
-            if (pos >= 3) return 1; // 5
+        }
+    }
+    printf("DRAW!!!\n");
+    return 0; // DRAW
+}
+
+
+int minimax(int depth, symbol player, int kolvoKletok, square** desk) {
+    if (depth < 3) {
+        symbol stat = check_state(desk, kolvoKletok);
+        if (stat == bot_move) return 100 - depth;
+        else if (stat == player_move) return -100 + depth;
+        else if (stat == 0) return 0;
+        if (player == bot_move) {
+            int best_score = -INFINITY;
+            for (int i = 0; i < kolvoKletok; i++) {
+                for (int j = 0; j < kolvoKletok; j++) {
+                    if (desk[i][j].sign == pusto) {
+                        desk[i][j].sign = bot_move;
+                        int score = minimax(depth + 1, player_move, kolvoKletok, desk);
+                        desk[i][j].sign = pusto;
+                        best_score = fmax(best_score, score);
+                    }
+                }
+            }
+            return best_score;
+        }
+        else {
+            int best_score = INFINITY;
+            for (int i = 0; i < kolvoKletok; i++) {
+                for (int j = 0; j < kolvoKletok; j++) {
+                    if (desk[i][j].sign == pusto) {
+                        desk[i][j].sign = player_move;
+                        int score = minimax(depth + 1, bot_move, kolvoKletok, desk);
+                        desk[i][j].sign = pusto;
+                        best_score = fmin(best_score, score);
+                    }
+                }
+            }
+            return best_score;
         }
     }
     return 0;
 }
 
-// Проверка на ничью!!!!!
-int check_draw(square** desk, int kolvoKletok) {
-    for (int i = 0; i < kolvoKletok; i++) {
-        for (int j = 0; j < kolvoKletok; j++) {
-            if (desk[i][j].sign == pusto) return 0;
-        }
-    }
-    return 1;
-}
-
-// Рекурсивная функция Minimax
-int minimax(square** desk, int kolvoKletok, int depth, int maximizingPlayer) {
-    int score = 0;
-    int bestScore = maximizingPlayer ? INT_MIN : INT_MAX;
-
-    // Проверка на выигрыш или ничью
-    if (check_win(desk, kolvoKletok, krestik)) return 10 - depth; // 10 - глубина, чтобы отдать предпочтение более быстрым выигрышам
-    if (check_win(desk, kolvoKletok, nolik)) return depth - 10;
-    if (check_draw(desk, kolvoKletok)) return 0;
-
-    // Перебор всех возможных ходов
+squarePriority get_move_minimax(square** desk, int kolvoKletok) {
+    int best_score = -INFINITY;
+    squarePriority bestMove;
+    bestMove.coordx = -1;
+    bestMove.coordy = -1;
     for (int i = 0; i < kolvoKletok; i++) {
         for (int j = 0; j < kolvoKletok; j++) {
             if (desk[i][j].sign == pusto) {
-                printf("Kletka: (%d %d); Depth: %d; Symbol: %c", i, j, depth, desk[i][j].sign);
-                symbol player = maximizingPlayer ? krestik : nolik;
-                desk[i][j].sign = player;
-                score = minimax(desk, kolvoKletok, depth + 1, !maximizingPlayer);
-                desk[i][j].sign = pusto; // Отмена хода
-
-                if (maximizingPlayer) {
-                    bestScore = (score > bestScore) ? score : bestScore;
-                }
-                else {
-                    bestScore = (score < bestScore) ? score : bestScore;
-                }
-            }
-        }
-    }
-    return bestScore;
-}
-
-
-// Функция для нахождения лучшего хода
-squarePriority findBestMove(square** desk, int kolvoKletok, int turn) {
-    squarePriority kletkaSALAM;
-    int score;
-    kletkaSALAM.priority = INT_MIN;
-    //int bestScore = INT_MIN;
-    for (int i = 0; i < kolvoKletok; i++) {
-        for (int j = 0; j < kolvoKletok; j++) {
-            if (desk[i][j].sign == pusto) {
-                if (turn % 2 == 0) {
-                    desk[i][j].sign = krestik;
-                    score = minimax(desk, kolvoKletok, 0, 0); // 0 - минимизирующий игрок (нолик)
-                }
-                else {
-                    desk[i][j].sign = nolik;
-                    score = minimax(desk, kolvoKletok, 0, 1); // 1 ????? - теперь крестик??? хз я запуталась
-                }
+                desk[i][j].sign = bot_move;
+                int score = minimax(0, player_move, kolvoKletok, desk);
                 desk[i][j].sign = pusto;
-                if (score > kletkaSALAM.priority) {
-                    kletkaSALAM.priority = score;
-                    kletkaSALAM.coordx = i; // горизонталь
-                    kletkaSALAM.coordy = j; // вертикаль (могла перепутать)
+
+                if (score > best_score && best_score > 0) {
+                    best_score = score;
+                    bestMove.coordx = i;
+                    bestMove.coordy = j;
                 }
             }
         }
     }
-    return kletkaSALAM;
+    return bestMove;
 }
-
-
-
 
 
 //-------------------------------------
@@ -798,23 +878,23 @@ int checkWin(square** desk, int kolvoKletok, int windowSize, GLFWwindow* window,
             int pos_X = 0;
             int pos_O = 0;
             if (desk[i][j].sign == krestik) {
-                if (pos_X < checkDiagonal1(desk, kolvoKletok, i, j, 0)) pos_X = checkDiagonal1(desk, kolvoKletok, i, j, 0);
-                if (pos_X < checkDiagonal2(desk, kolvoKletok, i, j, 0)) pos_X = checkDiagonal2(desk, kolvoKletok, i, j, 0);
-                if (pos_X < checkGorizont(desk, kolvoKletok, i, j, 0)) pos_X = checkGorizont(desk, kolvoKletok, i, j, 0);
-                if (pos_X < checkVertikal(desk, kolvoKletok, i, j, 0)) pos_X = checkVertikal(desk, kolvoKletok, i, j, 0);
+                if (pos_X < check_win_Diagonal1(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Diagonal1(desk, kolvoKletok, i, j, 0);
+                if (pos_X < check_win_Diagonal2(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Diagonal2(desk, kolvoKletok, i, j, 0);
+                if (pos_X < check_win_Gorizont(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Gorizont(desk, kolvoKletok, i, j, 0);
+                if (pos_X < check_win_Vertikal(desk, kolvoKletok, i, j, 0)) pos_X = check_win_Vertikal(desk, kolvoKletok, i, j, 0);
             }
             if (desk[i][j].sign == nolik) {
-                if (pos_O < checkDiagonal1(desk, kolvoKletok, i, j, 0)) pos_O = checkDiagonal1(desk, kolvoKletok, i, j, 0);
-                if (pos_O < checkDiagonal2(desk, kolvoKletok, i, j, 0)) pos_O = checkDiagonal2(desk, kolvoKletok, i, j, 0);
-                if (pos_O < checkGorizont(desk, kolvoKletok, i, j, 0)) pos_O = checkGorizont(desk, kolvoKletok, i, j, 0);
-                if (pos_O < checkVertikal(desk, kolvoKletok, i, j, 0)) pos_O = checkVertikal(desk, kolvoKletok, i, j, 0);
+                if (pos_O < check_win_Diagonal1(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Diagonal1(desk, kolvoKletok, i, j, 0);
+                if (pos_O < check_win_Diagonal2(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Diagonal2(desk, kolvoKletok, i, j, 0);
+                if (pos_O < check_win_Gorizont(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Gorizont(desk, kolvoKletok, i, j, 0);
+                if (pos_O < check_win_Vertikal(desk, kolvoKletok, i, j, 0)) pos_O = check_win_Vertikal(desk, kolvoKletok, i, j, 0);
             }
-            if (pos_O >= 3) { // 5
+            if (pos_O >= WIN_LEN) { // 5
                 printf("Nolik won!!! Congrat!!!");
                 if (option == 1) return 6;
                 else return 5;
             }
-            else if (pos_X >= 3) { // 5
+            else if (pos_X >= WIN_LEN) { // 5
                 printf("Krestik won!!! Congrat!!!");
                 if (option == 1) return 5;
                 else return 6;
@@ -825,6 +905,15 @@ int checkWin(square** desk, int kolvoKletok, int windowSize, GLFWwindow* window,
 }
 
 //---------------------------------------------------------------------------------------------------
+void do_first_step(square** desk, int kolvoKletok, int turn) {
+    squarePriority bot_next_move = checkPositions(desk, kolvoKletok, turn);
+    int coordx = bot_next_move.coordx;
+    int coordy = bot_next_move.coordy;
+    if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
+    else desk[coordx][coordy].sign = nolik;
+    setPriority(desk, kolvoKletok, coordx, coordy, turn);
+}
+
 
 int main(void) {
     int popa = 0;
@@ -872,7 +961,7 @@ int main(void) {
             else if (step == 1) {
                 glClear(GL_COLOR_BUFFER_BIT);
                 if (x > (windowSize / 2) * 0.28 && x < (windowSize / 2) * 1.72 && y >(windowSize / 2) * 0.45 && y < (windowSize / 2) * 0.76) {
-                    popa = 3; // 15
+                    popa = 15;
                     step++;
                 }
                 else if (x > (windowSize / 2) * 0.28 && x < (windowSize / 2) * 1.72 && y >(windowSize / 2) * 0.83 && y < (windowSize / 2) * 1.16) {
@@ -884,7 +973,6 @@ int main(void) {
                     step++;
                 }
                 else continue;
-                //kolvoKletok = popa + 2;
                 kolvoKletok = popa;
                 desk = (square**)malloc(sizeof(square*) * kolvoKletok);
                 for (int i = 0; i < kolvoKletok; i++) {
@@ -910,11 +998,15 @@ int main(void) {
                     option = 1;
                     step++;
                     printf("Krestik");
+                    player_move = krestik;
+                    bot_move = nolik;
                 }
                 else if (x > (windowSize / 2) * 1.14 && x < (windowSize / 2) * 1.7 && y >(windowSize / 2) * 0.86 && y < (windowSize / 2) * 1.42) {
                     option = 2;
                     step++;
                     printf("Nolik");
+                    player_move = nolik;
+                    bot_move = krestik;
                 }
                 glScalef(62.5, -62.5, 1);
                 if (option == 1) {
@@ -923,13 +1015,13 @@ int main(void) {
                     turn = 0;
                     step++;
                 }
-                else if (option == 2) { // бот играет за крестик
+                else if (option == 2) { // bot plays for krosses
                     turn = 0;
                     coordx = kolvoKletok / 2 + 1;
                     coordy = kolvoKletok / 2 + 1;
                     if (desk == NULL) return 1;
                     desk[coordx][coordy].sign = krestik;
-                    //setPriority(desk, kolvoKletok, coordx, coordy, turn);
+                    setPriority(desk, kolvoKletok, coordx, coordy, turn);
                     turn++;
                     printDesk(desk, kolvoKletok, window, windowSize);
                     step++;
@@ -950,24 +1042,31 @@ int main(void) {
                 }
                 if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
                 else desk[coordx][coordy].sign = nolik;
-                //setPriority(desk, kolvoKletok, coordx, coordy, turn);
+                setPriority(desk, kolvoKletok, coordx, coordy, turn);
                 turn++;
                 printDesk(desk, kolvoKletok, window, windowSize);
                 if (turn > 6) step = checkWin(desk, kolvoKletok, windowSize, window, option);
                 if (step == 5 || step == 6) continue;
 
                 double time1 = clock();
-                coordx = findBestMove(desk, kolvoKletok, turn).coordx;
-                coordy = findBestMove(desk, kolvoKletok, turn).coordy;
-                if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
-                else desk[coordx][coordy].sign = nolik;
-                //setPriority(desk, kolvoKletok, coordx, coordy, turn);
+                //do_first_step(desk, kolvoKletok, turn);
+                squarePriority bot_next_move = get_move_minimax(desk, kolvoKletok);
+                coordx = bot_next_move.coordx;
+                coordy = bot_next_move.coordy;
+                if (coordx == -1 && coordy == -1) {
+                    do_first_step(desk, kolvoKletok, turn);
+                }
+                else {
+                    if (turn % 2 == 0) desk[coordx][coordy].sign = krestik;
+                    else desk[coordx][coordy].sign = nolik;
+                }
                 double time2 = clock();
                 double operating_time = (time2 - time1) / CLOCKS_PER_SEC;
                 turn++;
                 printDesk(desk, kolvoKletok, window, windowSize);
                 printf("Algorithm time operating: %f\n", operating_time);
                 if (turn > 6) step = checkWin(desk, kolvoKletok, windowSize, window, option);
+                // swap for 'ckeck_state' (izbavitsa ot functsiy)
                 if (step == 5 || step == 6) continue;
             }
             else if (step == 5) {
